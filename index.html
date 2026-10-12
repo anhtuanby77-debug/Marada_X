@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARADA_X</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+            background: #000;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 460px;
+            width: 100%;
+            background: #0a0a0f;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* === KHUNG VIDEO === */
+        .video-card {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+        
+        .video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .video-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+        }
+        
+        .video-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            z-index: 2;
+            color: #ddd;
+        }
+        
+        .video-status {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 2;
+            color: #fff;
+        }
+        
+        .video-overlay-text {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 2;
+        }
+        
+        .video-overlay-text h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            line-height: 1.2;
+        }
+        
+        .video-overlay-text p {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 4px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        
+        /* === PHẦN NHẬP LINK === */
+        .input-section {
+            background: #111118;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .input-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8899aa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            border-color: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+        
+        .input-group input::placeholder { color: #556677; }
+        
+        .hint {
+            font-size: 11px;
+            color: #556677;
+            margin-top: 8px;
+        }
+        
+        /* === 2 NÚT TẢI (đều màu trắng) === */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: #fff;
+            color: #000;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .spinner {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .btn-primary.loading .spinner { display: inline-block; }
+        
+        #status {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 13px;
+            min-height: 20px;
+            color: #8899aa;
+        }
+        
+        #status.success { color: #28a745; }
+        #status.error { color: #e94560; }
+        
+        #result {
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .video-wrapper {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        
+        .video-preview {
+            width: 100%;
+            display: block;
+            max-height: 400px;
+            object-fit: contain;
+        }
+        
+        /* === NÚT TẢI VỀ (đều màu trắng) === */
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            background: #fff;
+            color: #000;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        .info {
+            color: #8899aa;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer p {
+            color: #556677;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .music-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- NHẠC NỀN -->
+    <audio id="bgMusic" loop>
+        <source src="https://files.catbox.moe/ilcrr4.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- NÚT BẬT/TẮT NHẠC -->
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">ON</button>
+
+    <div class="container">
+        <!-- KHUNG VIDEO -->
+        <div class="video-card">
+            <video autoplay muted loop playsinline>
+                <source src="https://files.catbox.moe/r9s73c.mp4" type="video/mp4">
+            </video>
+            <span class="video-tag">MARADA_X STUDIO</span>
+            <span class="video-status">ON</span>
+            <div class="video-overlay-text">
+                <h2>MARADA_X</h2>
+                <p>Tải video TikTok không dính ID</p>
+            </div>
+        </div>
+
+        <!-- PHẦN NHẬP LINK -->
+        <div class="input-section">
+            <div class="input-label">DÁN LINK TIKTOK</div>
+            <div class="input-group">
+                <input type="text" id="urlInput" placeholder="https://vt.tiktok.com/xxxx/">
+            </div>
+            <p class="hint"></p>
+            
+            <!-- 2 NÚT TẢI -->
+            <div class="btn-row">
+                <button class="btn-primary" id="downloadBtn" onclick="fetchVideo('video')">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Tải Video</span>
+                </button>
+                <button class="btn-primary" id="downloadMp3Btn" onclick="fetchVideo('mp3')">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Tải MP3</span>
+                </button>
+            </div>
+            <div id="status"></div>
+        </div>
+
+        <!-- KẾT QUẢ -->
+        <div id="result">
+            <div class="video-wrapper" id="videoWrapper">
+                <video class="video-preview" id="preview" controls></video>
+            </div>
+            <a class="download-btn" id="downloadLink" download>
+                TẢI VIDEO VỀ MÁY
+            </a>
+            <a class="download-btn" id="downloadMp3Link" download>
+                TẢI MP3 VỀ MÁY
+            </a>
+            <p class="info" id="videoInfo"></p>
+        </div>
+
+        <div class="footer">
+            <p>Dev • MARADA_X</p>
+        </div>
+    </div>
+
+    <script>
+        // === NHẠC NỀN ===
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicToggle.textContent = 'OFF';
+            } else {
+                bgMusic.play();
+                musicToggle.textContent = 'ON';
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        document.body.addEventListener('click', function initMusic() {
+            if (!musicPlaying) {
+                bgMusic.play().then(() => {
+                    musicPlaying = true;
+                    musicToggle.textContent = 'ON';
+                }).catch(() => {});
+            }
+            document.body.removeEventListener('click', initMusic);
+        }, { once: true });
+
+        // === HÀM TẢI VIDEO / MP3 ===
+        async function fetchVideo(type) {
+            const url = document.getElementById('urlInput').value.trim();
+            const status = document.getElementById('status');
+            const btnVideo = document.getElementById('downloadBtn');
+            const btnMp3 = document.getElementById('downloadMp3Btn');
+            const result = document.getElementById('result');
+            const videoWrapper = document.getElementById('videoWrapper');
+
+            if (!url) {
+                status.textContent = 'Vui lòng dán link TikTok!';
+                status.className = 'error';
+                return;
+            }
+
+            btnVideo.disabled = true;
+            btnMp3.disabled = true;
+            btnVideo.classList.remove('loading');
+            btnMp3.classList.remove('loading');
+            
+            if (type === 'video') btnVideo.classList.add('loading');
+            else btnMp3.classList.add('loading');
+
+            status.textContent = 'Đang xử lý...';
+            status.className = '';
+            result.style.display = 'none';
+
+            const apis = [
+                `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`,
+                `https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`,
+                `https://douyin.wtf/api/hybrid/video_data?url=${encodeURIComponent(url)}`
+            ];
+
+            let success = false;
+            let videoUrl = null;
+            let musicUrl = null;
+            let title = 'TikTok Video';
+
+            for (const apiUrl of apis) {
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+
+                    if (data.code === 0 && data.data) {
+                        videoUrl = data.data.play;
+                        musicUrl = data.data.music;
+                        title = data.data.title || title;
+                    } else if (data.video && data.video.noWatermark) {
+                        videoUrl = data.video.noWatermark;
+                        musicUrl = data.music?.play_url || data.music?.url;
+                        title = data.title || title;
+                    } else if (data.data && data.data.video_data && data.data.video_data.nwm_video_url) {
+                        videoUrl = data.data.video_data.nwm_video_url;
+                        musicUrl = data.data.music_data?.play_url;
+                        title = data.data.desc || title;
+                    }
+
+                    if (videoUrl) {
+                        success = true;
+                        break;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+
+            if (success && videoUrl) {
+                if (type === 'video') {
+                    videoWrapper.style.display = 'block';
+                    document.getElementById('preview').src = videoUrl;
+                    document.getElementById('downloadLink').href = videoUrl;
+                    document.getElementById('downloadLink').setAttribute('download', `tiktok_video_${Date.now()}.mp4`);
+                    document.getElementById('downloadLink').style.display = 'flex';
+                    document.getElementById('downloadMp3Link').style.display = 'none';
+                } else {
+                    if (musicUrl) {
+                        videoWrapper.style.display = 'none';
+                        document.getElementById('downloadMp3Link').href = musicUrl;
+                        document.getElementById('downloadMp3Link').setAttribute('download', `tiktok_audio_${Date.now()}.mp3`);
+                        document.getElementById('downloadMp3Link').style.display = 'flex';
+                        document.getElementById('downloadLink').style.display = 'none';
+                    } else {
+                        status.textContent = ' Không lấy được nhạc. Thử lại!';
+                        status.className = 'error';
+                        btnVideo.disabled = false;
+                        btnMp3.disabled = false;
+                        btnVideo.classList.remove('loading');
+                        btnMp3.classList.remove('loading');
+                        return;
+                    }
+                }
+
+                document.getElementById('videoInfo').textContent = ` ${title}`;
+                result.style.display = 'block';
+                status.textContent = ' Thành công!';
+                status.className = 'success';
+            } else {
+                status.textContent = ' Không tải được. Thử lại!';
+                status.className = 'error';
+            }
+
+            btnVideo.disabled = false;
+            btnMp3.disabled = false;
+            btnVideo.classList.remove('loading');
+            btnMp3.classList.remove('loading');
+        }
+
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') fetchVideo('video');
+        });
+    </script>
+</body>
+</html>
